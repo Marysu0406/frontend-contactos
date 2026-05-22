@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Agenda de Contactos</title>
+    
+    <link rel="icon" href="assets/img/favicon.png" type="image/png">
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background: linear-gradient(135deg, #6f42c1 0%, #a985e8 100%);">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-4" href="#">
+                <i class="fa-solid fa-heart me-2"></i>MyAgenda<span class="fw-light">Pro</span>
+            </a>
+            <button class="btn btn-light rounded-pill px-4 fw-bold text-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalContacto">
+                <i class="fa-solid fa-plus-circle me-1"></i> Añadir Contacto
+            </button>
+        </div>
+    </nav>
+
+    <main class="container my-5 flex-grow-1">
+        <div class="row mb-4 align-items-center">
+            <div class="col">
+                <h2 class="fw-bold text-secondary mb-0">Tus Contactos ❤️</h2>
+                <p class="text-muted">Gestiona tu red de forma fácil y bonita.</p>
+            </div>
+        </div>
+
+        <div class="card shadow-lg border-0 rounded-5 overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-soft-purple text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
+                            <tr>
+                                <th class="ps-5 py-4">Nombre Completo</th>
+                                <th class="py-4">Teléfono</th>
+                                <th class="py-4">Correo Electrónico</th>
+                                <th class="py-4">Categoría</th>
+                                <th class="text-center pe-5 py-4">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-contactos">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer mt-auto py-4 bg-white border-top">
+        <div class="container text-center">
+            <span class="text-muted">© 2026 Desarrollado con 💜 por <strong> Maricarmen Suárez</strong>.</span>
+        </div>
+        <div class="container text-center text-muted" style="font-size: 0.8rem;">
+            <span class="mx-2">UT | Ingeniería IT</span> | 
+            <span class="mx-2">DAW - Actividad 4.3 Full-stack</span> | 
+            <span class="mx-2">Alumna: <strong>Mary Suárez</strong></span> | 
+            <span class="mx-2">Prof: Mi amor</span>
+        </div>
+    </div>
+
+    </footer>
+
+    <div class="modal fade" id="modalContacto" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 rounded-5 shadow-lg">
+                <div class="modal-header border-0 text-white p-4 rounded-top-5" style="background: linear-gradient(135deg, #6f42c1 0%, #a985e8 100%);">
+                    <h5 class="modal-title fw-bold fs-4" id="tituloModal"><i class="fa-solid fa-user-plus me-2"></i>Nuevo Contacto</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="formulario-contacto">
+                    <input type="hidden" id="id-contacto">
+                    <div class="modal-body p-5">
+                        <div class="form-floating mb-4">
+                            <input type="text" id="nombre" class="form-control rounded-pill px-4" placeholder="Juan Pérez" required>
+                            <label for="nombre" class="px-4 text-muted">Nombre Completo</label>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="tel" id="telefono" class="form-control rounded-pill px-4" placeholder="5512345678" required>
+                            <label for="telefono" class="px-4 text-muted">Teléfono (10 dígitos)</label>
+                        </div>
+                        <div class="form-floating mb-4">
+                            <input type="email" id="email" class="form-control rounded-pill px-4" placeholder="name@example.com" required>
+                            <label for="email" class="px-4 text-muted">Correo Electrónico</label>
+                        </div>
+                        <div class="form-floating mb-3">
+                            <select id="categoria" class="form-select rounded-pill px-4" aria-label="Categoría">
+                                <option value="Trabajo">Trabajo</option>
+                                <option value="Familia">Familia</option>
+                                <option value="Amigos" selected>Amigos</option>
+                            </select>
+                            <label for="categoria" class="px-4 text-muted">Categoría</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0 d-flex justify-content-center">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow">
+                            <i class="fa-solid fa-save me-1"></i> Guardar Contacto
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js"></script>
+    <script type="module" src="assets/js/App.js"></script>
+</body>
+</html>
