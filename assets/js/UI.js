@@ -6,7 +6,7 @@ export class UI {
         contactos.forEach(contacto => {
             const fila = document.createElement('tr');
             fila.innerHTML = `
-                <td class="ps-5 py-4 fw-semibold text-dark">${contacto.nombre}</td>
+                <td class="ps-5 py-4 fw-semibold text-dark">${contacto.nombre_completo}</td>
                 <td><i class="fa-solid fa-phone text-muted me-2"></i>${contacto.telefono}</td>
                 <td><i class="fa-solid fa-envelope text-muted me-2"></i>${contacto.email}</td>
                 <td><i class="fa-solid fa-calendar-days text-muted me-2"></i>${contacto.fecha_nacimiento}</td>
