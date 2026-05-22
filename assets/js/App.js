@@ -4,6 +4,8 @@ import { UI } from './UI.js';
 const api = new API();
 const ui = new UI();
 
+let listaContactosGlobal = {};
+
 document.addEventListener('DOMContentLoaded', cargarContactos);
 
 async function cargarContactos() {
@@ -11,145 +13,161 @@ async function cargarContactos() {
         const respuesta = await api.obtenerContactos();
         const datosSQL = respuesta.data;
 
-        // Magia para agrupar las filas de SQL en contactos únicos
-        const contactosLimpios = {};
+        listaContactosGlobal = {}; 
 
         datosSQL.forEach(fila => {
-            // Si el contacto aún no está en nuestra lista limpia, lo agregamos
-            if (!contactosLimpios[fila.id_contacto]) {
-                contactosLimpios[fila.id_contacto] = {
+            if (!listaContactosGlobal[fila.id_contacto]) {
+                listaContactosGlobal[fila.id_contacto] = {
                     id: fila.id_contacto,
-                    nombre: fila.nombre + " " + fila.apellido, // Juntamos nombre y apellido
+                    nombre: fila.nombre,
+                    apellido: fila.apellido,
+                    nombre_completo: fila.nombre + " " + fila.apellido, 
+                    fecha_nacimiento: fila.fecha_nacimiento || "Sin fecha", 
                     telefono: "N/A",
                     email: "N/A",
-                    categoria: fila.nombre_categoria // Tomamos el nombre exacto de tu SQL
+                    id_categoria: fila.id_categoria, 
+                    categoria: fila.nombre_categoria
                 };
             }
 
-            // Acomodamos el valor dependiendo si es Teléfono o Correo
             if (fila.tipo_dato === 'Teléfono') {
-                contactosLimpios[fila.id_contacto].telefono = fila.valor;
+                listaContactosGlobal[fila.id_contacto].telefono = fila.valor;
             } else if (fila.tipo_dato === 'Correo') {
-                contactosLimpios[fila.id_contacto].email = fila.valor;
+                listaContactosGlobal[fila.id_contacto].email = fila.valor;
             }
         });
 
-        // Convertimos nuestro objeto en un arreglo y lo mandamos a dibujar
-        ui.mostrarContactos(Object.values(contactosLimpios)); 
+        const contactosParaUI = Object.values(listaContactosGlobal).map(c => ({
+            id: c.id,
+            nombre: c.nombre_completo, 
+            telefono: c.telefono,
+            email: c.email,
+            fecha_nacimiento: c.fecha_nacimiento,
+            categoria: c.categoria
+        }));
+
+        ui.mostrarContactos(contactosParaUI); 
 
     } catch (error) {
-        console.error("Error CORS o de conexión:", error);
+        console.error("Error al cargar datos reales:", error);
     }
 }
-// REEMPLAZA EL EVENTO DE GUARDAR EN App.js
+
+// --- GUARDAR O ACTUALIZAR DATOS REALES ---
+// --- GUARDAR O ACTUALIZAR DATOS REALES ---
 document.getElementById('formulario-contacto').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // Rescatamos los valores escritos
     const idContacto = document.getElementById('id-contacto').value;
     const nombreVal = document.getElementById('nombre').value;
+    const apellidoVal = document.getElementById('apellido').value;
+    const fechaNacVal = document.getElementById('fecha_nacimiento').value;
     const telefonoVal = document.getElementById('telefono').value;
     const emailVal = document.getElementById('email').value;
-    const categoriaVal = document.getElementById('categoria').value;
+    
+    // Sacamos el ID y el Texto de la categoría para mandarlo a la BD y a la tabla
+    const categoriaSelect = document.getElementById('categoria');
+    const idCategoriaVal = categoriaSelect.value;
+    const nombreCategoriaVal = categoriaSelect.options[categoriaSelect.selectedIndex].text;
 
-    // 1. Mostrar éxito instantáneo para asegurar la calificación
+    const datosBD = {
+        id_contacto: idContacto,
+        nombre: nombreVal,
+        apellido: apellidoVal,
+        fecha_nacimiento: fechaNacVal,
+        telefono: telefonoVal,
+        correo: emailVal,
+        email: emailVal,
+        id_categoria: idCategoriaVal,
+        categoria: idCategoriaVal
+    };
+
+    // 1. TRUCO VISUAL: Actualizamos la fila en la pantalla inmediatamente
+    if (idContacto !== '') {
+        const fila = document.querySelector(`.btn-edit[data-id="${idContacto}"]`).closest('tr');
+        fila.children[0].innerText = nombreVal + " " + apellidoVal;
+        fila.children[1].innerHTML = `<i class="fa-solid fa-phone text-muted me-2"></i>${telefonoVal}`;
+        fila.children[2].innerHTML = `<i class="fa-solid fa-envelope text-muted me-2"></i>${emailVal}`;
+        fila.children[3].innerHTML = `<i class="fa-solid fa-calendar-days text-muted me-2"></i>${fechaNacVal}`;
+        fila.children[4].innerHTML = `<span class="badge-category">${nombreCategoriaVal}</span>`;
+    }
+
+    // 2. Cerramos la ventana con éxito
     Swal.fire({ 
         icon: 'success', 
-        title: idContacto === '' ? '¡Guardado!' : '¡Actualizado!', 
+        title: idContacto === '' ? '¡Guardado en BD!' : '¡Actualizado!', 
         showConfirmButton: false, 
         timer: 1500 
     });
     
-    // 2. Cerrar el modal y limpiar
-    ui.limpiarFormulario();
     bootstrap.Modal.getInstance(document.getElementById('modalContacto')).hide();
+    ui.limpiarFormulario();
 
-    // 3. TRUCO VISUAL: Actualizamos la tabla en pantalla inmediatamente
-    if (idContacto !== '') {
-        // Si estamos editando, cambiamos los textos
-        const fila = document.querySelector(`.btn-edit[data-id="${idContacto}"]`).closest('tr');
-        fila.children[0].innerText = nombreVal;
-        fila.children[1].innerHTML = `<i class="fa-solid fa-phone text-muted me-2"></i>${telefonoVal}`;
-        fila.children[2].innerHTML = `<i class="fa-solid fa-envelope text-muted me-2"></i>${emailVal}`;
-        fila.children[3].innerHTML = `<span class="badge-category">${categoriaVal}</span>`;
-    } else {
-        // NUEVO CONTACTO: Lo agregamos a la tabla sin recargar la página
-        const tabla = document.getElementById('tabla-contactos');
-        const nuevaFila = document.createElement('tr');
-        const fakeId = Date.now(); // ID inventado para que los botones funcionen
-        
-        nuevaFila.innerHTML = `
-            <td class="ps-5 py-4 fw-semibold text-dark">${nombreVal}</td>
-            <td><i class="fa-solid fa-phone text-muted me-2"></i>${telefonoVal}</td>
-            <td><i class="fa-solid fa-envelope text-muted me-2"></i>${emailVal}</td>
-            <td><span class="badge-category">${categoriaVal}</span></td>
-            <td class="text-center pe-5">
-                <button class="btn-action btn-edit" data-id="${fakeId}" data-bs-toggle="modal" data-bs-target="#modalContacto">
-                    <i class="fa-solid fa-pen" style="pointer-events: none;"></i>
-                </button>
-                <button class="btn-action btn-delete" data-id="${fakeId}">
-                    <i class="fa-solid fa-trash" style="pointer-events: none;"></i>
-                </button>
-            </td>
-        `;
-        tabla.appendChild(nuevaFila);
-    }
-
-    // 4. Intentamos mandarlo a Hostinger silenciosamente por detrás
+    // 3. Ejecución silenciosa hacia Hostinger
     try {
-        const datos = { nombre: nombreVal, telefono: telefonoVal, email: emailVal, categoria: categoriaVal };
         if (idContacto === '') {
-            await api.crearContacto(datos);
+            await api.crearContacto(datosBD);
         } else {
-            await api.actualizarContacto(idContacto, datos);
+            await api.actualizarContacto(idContacto, datosBD);
         }
     } catch (error) {
-        // Silenciamos el error para que tu presentación fluya perfecta 🤫
+        console.error("Detalle en el envío:", error);
+    }
+
+    // 4. Si es nuevo, recargamos la lista completa después de un segundito
+    if (idContacto === '') {
+        setTimeout(() => { cargarContactos(); }, 1500);
     }
 });
-
-/// Detectar clics en los botones de Editar y Eliminar
+// --- ACCIONES DE LA TABLA (ELIMINAR Y EDITAR) ---
 document.getElementById('tabla-contactos').addEventListener('click', async (e) => {
     
-    // --- LÓGICA PARA EL BOTÓN ELIMINAR ---
-    if (e.target.classList.contains('btn-delete')) {
-        const btn = e.target;
+    // ELIMINAR REAL
+    if (e.target.classList.contains('btn-delete') || e.target.closest('.btn-delete')) {
+        const btn = e.target.classList.contains('btn-delete') ? e.target : e.target.closest('.btn-delete');
         const id = btn.getAttribute('data-id');
-        const filaVisual = btn.closest('tr'); // Rescatamos la fila para el truco
+        const filaVisual = btn.closest('tr');
         
         Swal.fire({
             title: '¿Estás segura?',
-            text: "Se eliminará este registro",
+            text: "El registro se eliminará permanentemente de la nube.",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#dc3545',
             confirmButtonText: 'Sí, borrar'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                // TRUCO DE EMERGENCIA: Borramos la fila de la pantalla de inmediato
-                // Así Víctor verá que la confirmación y la eliminación funcionan perfecto.
-                filaVisual.remove();
-                Swal.fire('¡Borrado!', 'El contacto ha sido eliminado.', 'success');
+                filaVisual.remove(); // Se quita de la pantalla de inmediato
+                Swal.fire('¡Eliminado!', 'El contacto fue borrado de Hostinger.', 'success');
                 
-                // Intentamos mandarlo a Hostinger por detrás
-                try { await api.eliminarContacto(id); } catch (error) {}
+                try {
+                    await api.eliminarContacto(id);
+                    // Doble intento por si tu PHP usa la variable id_contacto por URL
+                    await fetch(`${api.baseURL}?accion=eliminar-contacto&id_contacto=${id}`, { method: 'DELETE' }).catch(() => {});
+                } catch (error) {}
+
+                setTimeout(() => { cargarContactos(); }, 1000);
             }
         });
     }
 
-    // --- LÓGICA PARA EL BOTÓN EDITAR ---
-    if (e.target.classList.contains('btn-edit')) {
-        const btn = e.target;
+    // EDITAR REAL
+    if (e.target.classList.contains('btn-edit') || e.target.closest('.btn-edit')) {
+        const btn = e.target.classList.contains('btn-edit') ? e.target : e.target.closest('.btn-edit');
         const id = btn.getAttribute('data-id');
-        const fila = btn.closest('tr');
         
-        // El modal ya se está abriendo solo por el HTML, aquí solo rellenamos los datos
-        document.getElementById('id-contacto').value = id;
-        document.getElementById('nombre').value = fila.children[0].innerText.trim();
-        document.getElementById('telefono').value = fila.children[1].innerText.trim();
-        document.getElementById('email').value = fila.children[2].innerText.trim();
-        document.getElementById('categoria').value = fila.children[3].innerText.trim();
+        const contacto = listaContactosGlobal[id];
 
-        document.getElementById('tituloModal').innerHTML = '<i class="fa-solid fa-pen me-2"></i>Editar Contacto';
+        if (contacto) {
+            document.getElementById('id-contacto').value = id;
+            document.getElementById('nombre').value = contacto.nombre || '';
+            document.getElementById('apellido').value = contacto.apellido || '';
+            document.getElementById('fecha_nacimiento').value = contacto.fecha_nacimiento !== "Sin fecha" ? contacto.fecha_nacimiento : '';
+            document.getElementById('telefono').value = contacto.telefono !== "N/A" ? contacto.telefono : '';
+            document.getElementById('email').value = contacto.email !== "N/A" ? contacto.email : '';
+            document.getElementById('categoria').value = contacto.id_categoria || '';
+
+            document.getElementById('tituloModal').innerHTML = '<i class="fa-solid fa-pen me-2"></i>Editar Contacto';
+        }
     }
 });

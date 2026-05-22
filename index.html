@@ -19,7 +19,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background: linear-gradient(135deg, #6f42c1 0%, #a985e8 100%);">
         <div class="container">
             <a class="navbar-brand fw-bold fs-4" href="#">
-                <i class="fa-solid fa-heart me-2"></i>MyAgenda<span class="fw-light">Pro</span>
+                <i class="fa-solid fa-heart me-2"></i>Mi agenda</span>
             </a>
             <button class="btn btn-light rounded-pill px-4 fw-bold text-primary shadow-sm" data-bs-toggle="modal" data-bs-target="#modalContacto">
                 <i class="fa-solid fa-plus-circle me-1"></i> Añadir Contacto
@@ -31,7 +31,6 @@
         <div class="row mb-4 align-items-center">
             <div class="col">
                 <h2 class="fw-bold text-secondary mb-0">Tus Contactos ❤️</h2>
-                <p class="text-muted">Gestiona tu red de forma fácil y bonita.</p>
             </div>
         </div>
 
@@ -39,15 +38,16 @@
             <div class="card-body p-0">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle mb-0">
-                        <thead class="table-soft-purple text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
-                            <tr>
-                                <th class="ps-5 py-4">Nombre Completo</th>
-                                <th class="py-4">Teléfono</th>
-                                <th class="py-4">Correo Electrónico</th>
-                                <th class="py-4">Categoría</th>
-                                <th class="text-center pe-5 py-4">Acciones</th>
-                            </tr>
-                        </thead>
+                       <thead class="table-soft-purple text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
+    <tr>
+        <th class="ps-5 py-4">Nombre Completo</th>
+        <th class="py-4">Teléfono</th>
+        <th class="py-4">Correo Electrónico</th>
+        <th class="py-4">Fecha de Nacimiento</th>
+        <th class="py-4">Categoría</th>
+        <th class="text-center pe-5 py-4">Acciones</th>
+    </tr>
+</thead>
                         <tbody id="tabla-contactos">
                             </tbody>
                     </table>
@@ -60,11 +60,9 @@
         <div class="container text-center">
             <span class="text-muted">© 2026 Desarrollado con 💜 por <strong> Maricarmen Suárez</strong>.</span>
         </div>
-        <div class="container text-center text-muted" style="font-size: 0.8rem;">
-            <span class="mx-2">UT | Ingeniería IT</span> | 
-            <span class="mx-2">DAW - Actividad 4.3 Full-stack</span> | 
-            <span class="mx-2">Alumna: <strong>Mary Suárez</strong></span> | 
-            <span class="mx-2">Prof: Mi amor</span>
+        <div class="container text-center text-muted" style="font-size: 0.8rem;"> | 
+            <span class="mx-2">Actividad 4.3 Full-stack</span> | 
+            <span class="mx-2">Alumna: <strong>Maricarmen Suárez</strong></span> | 
         </div>
     </div>
 
@@ -80,27 +78,43 @@
                 <form id="formulario-contacto">
                     <input type="hidden" id="id-contacto">
                     <div class="modal-body p-5">
-                        <div class="form-floating mb-4">
-                            <input type="text" id="nombre" class="form-control rounded-pill px-4" placeholder="Juan Pérez" required>
-                            <label for="nombre" class="px-4 text-muted">Nombre Completo</label>
-                        </div>
-                        <div class="form-floating mb-4">
-                            <input type="tel" id="telefono" class="form-control rounded-pill px-4" placeholder="5512345678" required>
-                            <label for="telefono" class="px-4 text-muted">Teléfono (10 dígitos)</label>
-                        </div>
-                        <div class="form-floating mb-4">
-                            <input type="email" id="email" class="form-control rounded-pill px-4" placeholder="name@example.com" required>
-                            <label for="email" class="px-4 text-muted">Correo Electrónico</label>
-                        </div>
-                        <div class="form-floating mb-3">
-                            <select id="categoria" class="form-select rounded-pill px-4" aria-label="Categoría">
-                                <option value="Trabajo">Trabajo</option>
-                                <option value="Familia">Familia</option>
-                                <option value="Amigos" selected>Amigos</option>
-                            </select>
-                            <label for="categoria" class="px-4 text-muted">Categoría</label>
-                        </div>
-                    </div>
+    <div class="row">
+        <div class="col-md-6 form-floating mb-4">
+            <input type="text" id="nombre" class="form-control rounded-pill px-4" placeholder="Juan" required>
+            <label for="nombre" class="px-4 text-muted">Nombre</label>
+        </div>
+        <div class="col-md-6 form-floating mb-4">
+            <input type="text" id="apellido" class="form-control rounded-pill px-4" placeholder="Pérez" required>
+            <label for="apellido" class="px-4 text-muted">Apellido</label>
+        </div>
+    </div>
+    
+    <div class="form-floating mb-4">
+        <input type="date" id="fecha_nacimiento" class="form-control rounded-pill px-4" required>
+        <label for="fecha_nacimiento" class="px-4 text-muted">Fecha de Nacimiento</label>
+    </div>
+
+    <div class="form-floating mb-4">
+        <input type="tel" id="telefono" class="form-control rounded-pill px-4" placeholder="7712345678" required>
+        <label for="telefono" class="px-4 text-muted">Teléfono principal</label>
+    </div>
+    <div class="form-floating mb-4">
+        <input type="email" id="email" class="form-control rounded-pill px-4" placeholder="name@example.com" required>
+        <label for="email" class="px-4 text-muted">Correo Electrónico</label>
+    </div>
+
+    <div class="form-floating mb-3">
+        <select id="categoria" class="form-select rounded-pill px-4" required>
+            <option value="" disabled selected>Selecciona una categoría...</option>
+            <option value="1">Familia Cercana</option>
+            <option value="2">Trabajo</option>
+            <option value="3">Escuela</option>
+            <option value="4">Amigos</option>
+            <option value="5">Clientes</option>
+        </select>
+        <label for="categoria" class="px-4 text-muted">Categoría</label>
+    </div>
+</div>
                     <div class="modal-footer border-0 p-4 pt-0 d-flex justify-content-center">
                         <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-primary rounded-pill px-5 fw-bold shadow">

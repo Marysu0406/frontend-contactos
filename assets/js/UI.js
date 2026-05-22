@@ -9,6 +9,7 @@ export class UI {
                 <td class="ps-5 py-4 fw-semibold text-dark">${contacto.nombre}</td>
                 <td><i class="fa-solid fa-phone text-muted me-2"></i>${contacto.telefono}</td>
                 <td><i class="fa-solid fa-envelope text-muted me-2"></i>${contacto.email}</td>
+                <td><i class="fa-solid fa-calendar-days text-muted me-2"></i>${contacto.fecha_nacimiento}</td>
                 <td><span class="badge-category">${contacto.categoria}</span></td>
                 <td class="text-center pe-5">
                     <button class="btn-action btn-edit" data-id="${contacto.id}" data-bs-toggle="modal" data-bs-target="#modalContacto">
@@ -25,6 +26,6 @@ export class UI {
 
     limpiarFormulario() {
         document.getElementById('formulario-contacto').reset();
-        document.getElementById('id-contacto').value = ''; // Limpiar el ID oculto
+        document.getElementById('id-contacto').value = ''; 
     }
 }
