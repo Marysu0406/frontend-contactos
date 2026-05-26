@@ -69,7 +69,7 @@ document.getElementById('formulario-contacto').addEventListener('submit', async 
             await api.actualizarContacto(idContacto, datosBD);
         }
         
-        Swal.fire({ icon: 'success', title: '¡Guardado en BD!', showConfirmButton: false, timer: 1500 });
+        Swal.fire({ icon: 'success', title: '¡Guardado!', showConfirmButton: false, timer: 1500 });
         bootstrap.Modal.getInstance(document.getElementById('modalContacto')).hide();
         ui.limpiarFormulario();
         
