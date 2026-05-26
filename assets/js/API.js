@@ -39,4 +39,8 @@ export class API {
         });
         return await respuesta.json();
     }
+    async obtenerCategorias() {
+    const respuesta = await fetch(`${this.baseURL}?accion=obtener-categorias`);
+    return await respuesta.json();
+}
 }

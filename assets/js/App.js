@@ -6,7 +6,30 @@ const ui = new UI();
 
 let listaContactosGlobal = {};
 
-document.addEventListener('DOMContentLoaded', cargarContactos);
+document.addEventListener('DOMContentLoaded', () => {
+    cargarCategorias();
+    cargarContactos();
+});
+
+async function cargarCategorias() {
+    try {
+        const respuesta = await api.obtenerCategorias();
+        const select = document.getElementById('categoria');
+        
+        select.innerHTML = '<option value="" disabled selected>Selecciona una categoría...</option>';
+        
+        if (respuesta.data) {
+            respuesta.data.forEach(cat => {
+                const opcion = document.createElement('option');
+                opcion.value = cat.id_categoria;
+                opcion.textContent = cat.nombre_categoria;
+                select.appendChild(opcion);
+            });
+        }
+    } catch (error) {
+        console.error("Error al cargar categorías:", error);
+    }
+}
 
 async function cargarContactos() {
     try {
@@ -51,7 +74,6 @@ document.getElementById('formulario-contacto').addEventListener('submit', async 
     const idContacto = document.getElementById('id-contacto').value;
     const categoriaSelect = document.getElementById('categoria');
     
-    // Si la fecha está vacía, mandamos una por defecto para que la BD no marque error
     const datosBD = {
         id_contacto: idContacto,
         nombre: document.getElementById('nombre').value,
@@ -111,11 +133,8 @@ document.getElementById('tabla-contactos').addEventListener('click', async (e) =
         }
     }
 });
-// --- LIMPIAR FORMULARIO AL CERRAR LA VENTANA (CANCELAR O X) ---
+
 document.getElementById('modalContacto').addEventListener('hidden.bs.modal', () => {
-    // 1. Vaciamos todas las cajitas y el ID oculto
     ui.limpiarFormulario();
-    
-    // 2. Regresamos el título de la ventana a su estado original
     document.getElementById('tituloModal').innerHTML = '<i class="fa-solid fa-user-plus me-2"></i>Nuevo Contacto';
 });
