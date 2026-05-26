@@ -111,3 +111,11 @@ document.getElementById('tabla-contactos').addEventListener('click', async (e) =
         }
     }
 });
+// --- LIMPIAR FORMULARIO AL CERRAR LA VENTANA (CANCELAR O X) ---
+document.getElementById('modalContacto').addEventListener('hidden.bs.modal', () => {
+    // 1. Vaciamos todas las cajitas y el ID oculto
+    ui.limpiarFormulario();
+    
+    // 2. Regresamos el título de la ventana a su estado original
+    document.getElementById('tituloModal').innerHTML = '<i class="fa-solid fa-user-plus me-2"></i>Nuevo Contacto';
+});
