@@ -23,7 +23,7 @@ export class API {
         // Tu PHP exige que el id_contacto vaya adentro del JSON, no en la URL
         contacto.id_contacto = id; 
         
-        const respuesta = await fetch(`${this.baseURL}?accion=actualizar-contacto`, {
+        const respuesta = await fetch(`${this.baseURL}?accion=actualizar-contacto-completo`, {
             method: 'PUT',
             body: JSON.stringify(contacto)
         });
